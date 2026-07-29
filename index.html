@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Carino Fonts — Browser Font Editor</title>
+  <meta name="description" content="Make fonts in your browser: pixel and vector glyph editing, kerning, live preview, TTF/WOFF export and subsetting. Everything stays on your machine."/>
+  <link rel="icon" type="image/webp" href="logo.webp"/>
+  <link rel="canonical" href="https://fonts.carino.systems/"/>
+  <meta property="og:title" content="Carino Fonts — Browser Font Editor"/>
+  <meta property="og:description" content="Make fonts in your browser: pixel and vector glyph editing, kerning, live preview, TTF/WOFF export and subsetting. Everything stays on your machine."/>
+  <meta property="og:image" content="https://fonts.carino.systems/logo.webp"/>
+  <meta property="og:url" content="https://fonts.carino.systems/"/>
+  <meta property="og:type" content="website"/>
+  <link rel="stylesheet" href="fonts/carino-fonts.css"/>
+  <link rel="stylesheet" href="styles.css"/>
+  <script src="carino-navbar.js" data-app="Fonts" defer></script>
+</head>
+<body>
+  <!-- header.top-header is injected here by carino-navbar.js -->
+  <main>
+    <section id="tab-glyphs" class="active"></section>
+  </main>
+  <!-- popup sections: the editor and spacing UIs live here hidden and are
+       moved into a modal when opened (see app.js openSection) -->
+  <div id="popup-holder" style="display:none">
+    <section id="tab-editor">
+      <div id="editor-pixel"></div>
+      <div id="editor-vector"></div>
+    </section>
+    <section id="tab-spacing"></section>
+  </div>
+  <script src="vendor/opentype.min.js"></script>
+  <script src="js/model.js"></script>
+  <script src="js/fontbuild.js"></script>
+  <script src="js/import.js"></script>
+  <script src="js/ui-shared.js"></script>
+  <script src="js/ui-glyphmap.js"></script>
+  <script src="js/ui-pixel.js"></script>
+  <script src="js/ui-vector.js"></script>
+  <script src="js/ui-spacing.js"></script>
+  <script src="js/ui-preview.js"></script>
+  <script src="js/ui-export.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

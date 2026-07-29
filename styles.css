@@ -1,0 +1,232 @@
+/* Carino Fonts — app shell + shared component styles.
+   Tab modules build their own DOM inside the sections; these classes
+   (.panel .btn .field .toast .row + the modal classes) are the contract they rely on. */
+
+:root {
+  --bg: #050505;
+  --panel: #0b0b0b;
+  --panel2: #0d0d0d;
+  --border: #262626;
+  --text: #e5e5e5;
+  --text-dim: #a3a3a3;
+  --text-muted: #666;
+  --accent: #eab308;
+  --ok: #22c55e;
+  --err: #ef4444;
+  --radius: 10px;
+
+  --fs-micro: .6rem;
+  --fs-label: .65rem;
+  --fs-btn: .7rem;
+  --fs-sm: .8rem;
+  --fs-mono: .85rem;
+  --fs-sec: .9rem;
+  --fs-body: 1rem;
+  --fs-lg: 1.05rem;
+  --fs-h3: 1.2rem;
+  --fs-h2: 1.5rem;
+  --fs-h1: 1.9rem;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body { height: 100%; }
+
+body {
+  font-family: 'IBM Plex Sans', system-ui, sans-serif;
+  font-size: var(--fs-body);
+  background: var(--bg);
+  color: var(--text);
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  overflow: hidden;
+}
+
+h1, h2, h3, h4 { font-family: 'Red Hat Display', sans-serif; font-weight: 900; }
+h1 { font-size: var(--fs-h1); }
+h2 { font-size: var(--fs-h2); }
+h3 { font-size: var(--fs-h3); }
+
+code, pre, kbd { font-family: 'IBM Plex Mono', monospace; font-size: var(--fs-mono); }
+
+/* ─── Sections fill the remaining viewport ────────────────────── */
+main {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+main > section {
+  display: none;
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  padding: 18px 20px;
+}
+main > section.active { display: flex; flex-direction: column; gap: 14px; }
+
+/* Editor tab hosts two swappable editors; app.js toggles which shows. */
+#editor-pixel, #editor-vector { flex: 1; min-height: 0; display: flex; flex-direction: column; gap: 14px; }
+
+/* ─── Panels ──────────────────────────────────────────────────── */
+.panel {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 14px 16px;
+}
+
+/* ─── Buttons ─────────────────────────────────────────────────── */
+.btn {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: var(--fs-btn);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  color: var(--text);
+  background: var(--panel2);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 8px 14px;
+  cursor: pointer;
+  transition: border-color .15s, background .15s, color .15s, transform .1s;
+  user-select: none;
+}
+.btn:hover { border-color: var(--accent); color: var(--accent); }
+.btn:active { transform: translateY(1px); }
+.btn:disabled { opacity: .4; cursor: not-allowed; transform: none; }
+.btn:disabled:hover { border-color: var(--border); color: var(--text); }
+
+.btn.primary {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #050505;
+}
+.btn.primary:hover { background: #fde047; border-color: #fde047; color: #050505; }
+
+.btn.danger { border-color: var(--err); color: var(--err); }
+.btn.danger:hover { background: var(--err); color: #050505; }
+
+.btn.active {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: rgba(234, 179, 8, .1);
+}
+
+/* ─── Fields ──────────────────────────────────────────────────── */
+.field { display: flex; flex-direction: column; gap: 5px; min-width: 0; }
+
+.field > label, label.lbl {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: var(--fs-label);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .1em;
+  color: var(--text-dim);
+}
+
+input[type="text"], input[type="number"], input[type="search"],
+input[type="url"], select, textarea {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: var(--fs-mono);
+  color: var(--text);
+  background: var(--panel2);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 8px 10px;
+  outline: none;
+  transition: border-color .15s;
+  max-width: 100%;
+}
+input:focus, select:focus, textarea:focus { border-color: var(--accent); }
+input::placeholder, textarea::placeholder { color: var(--text-muted); }
+textarea { resize: vertical; min-height: 80px; line-height: 1.5; }
+select { cursor: pointer; }
+
+input[type="checkbox"], input[type="radio"] { accent-color: var(--accent); cursor: pointer; }
+input[type="range"] { accent-color: var(--accent); cursor: pointer; }
+input[type="color"] {
+  background: var(--panel2);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 2px;
+  cursor: pointer;
+}
+
+/* ─── Toasts ──────────────────────────────────────────────────── */
+.toast {
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  z-index: 2147483001; /* above the navbar's stacking context */
+  max-width: 360px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--accent);
+  border-radius: 6px;
+  padding: 10px 14px;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: var(--fs-sm);
+  color: var(--text);
+  box-shadow: 0 6px 24px rgba(0, 0, 0, .55);
+  animation: toast-in .18s ease-out;
+}
+.toast.ok { border-left-color: var(--ok); }
+.toast.err { border-left-color: var(--err); }
+
+@keyframes toast-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ─── Misc shared bits ────────────────────────────────────────── */
+.dim { color: var(--text-dim); }
+.muted { color: var(--text-muted); }
+.mono { font-family: 'IBM Plex Mono', monospace; font-size: var(--fs-mono); }
+.row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+
+hr { border: none; border-top: 1px solid var(--border); }
+
+a { color: var(--accent); }
+a:hover { filter: brightness(1.15); }
+
+::selection { background: rgba(234, 179, 8, .3); }
+
+/* ─── Scrollbars ──────────────────────────────────────────────── */
+* { scrollbar-width: thin; scrollbar-color: var(--border) transparent; }
+*::-webkit-scrollbar { width: 10px; height: 10px; }
+*::-webkit-scrollbar-track { background: transparent; }
+*::-webkit-scrollbar-thumb { background: var(--border); border-radius: 5px; }
+*::-webkit-scrollbar-thumb:hover { background: #3a3a3a; }
+
+/* ─── Responsive (designed for 1024px+) ───────────────────────── */
+@media (max-width: 1024px) {
+  main > section { padding: 14px 12px; }
+}
+
+/* ── Modals (Preview / Export popups) ─────────────────────────── */
+.modal-overlay {
+  position: fixed; inset: 0; z-index: 1000;
+  background: rgba(0, 0, 0, 0.65);
+  display: flex; align-items: flex-start; justify-content: center;
+  padding: 32px 16px 24px; overflow-y: auto;
+}
+.modal-box {
+  background: var(--panel); border: 1px solid var(--border);
+  border-radius: var(--radius);
+  width: min(960px, 100%);
+  box-shadow: 0 18px 60px rgba(0, 0, 0, 0.55);
+}
+.modal-head {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 12px; padding: 14px 18px; border-bottom: 1px solid var(--border);
+}
+.modal-head h3 {
+  font-family: "Red Hat Display", sans-serif; font-weight: 900;
+  font-size: var(--fs-h3); margin: 0;
+}
+.modal-close { padding: 4px 10px; }
+.modal-body { padding: 16px 18px 18px; display: flex; flex-direction: column; gap: 14px; }
+.modal-box.wide { width: min(1520px, 100%); }
