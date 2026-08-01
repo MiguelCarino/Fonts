@@ -220,7 +220,7 @@
     els.plus.disabled = !on;
     els.selInfo.textContent = on
       ? chr(sel.l) + ' / ' + chr(sel.r) + ' : ' + kernVal(sel.l, sel.r)
-      : 'no pair selected';
+      : t('no pair selected');
   }
 
   function selectPair(l, r) {
@@ -310,7 +310,7 @@
       return (+pa[0] - +pb[0]) || (+pa[1] - +pb[1]);
     });
     if (!keys.length) {
-      box.appendChild(el('div', 'muted sp-empty', 'No kerning pairs yet. Click a gap in the sample above.'));
+      box.appendChild(el('div', 'muted sp-empty', t('No kerning pairs yet. Click a gap in the sample above.')));
       return;
     }
     keys.forEach(function (key) {
@@ -330,7 +330,7 @@
         window.FontModel.save();
       });
       var del = el('button', 'btn sp-del', '×');
-      del.title = 'Delete pair';
+      del.title = t('Delete pair');
       del.addEventListener('click', function () {
         delete doc().kerning[key];
         if (sel && sel.l === l && sel.r === r) sel = null;
@@ -350,7 +350,7 @@
     box.textContent = '';
     var keys = Object.keys(doc().glyphs).map(Number).sort(function (a, b) { return a - b; });
     if (!keys.length) {
-      box.appendChild(el('div', 'muted sp-empty', 'No glyphs in font yet.'));
+      box.appendChild(el('div', 'muted sp-empty', t('No glyphs in font yet.')));
       return;
     }
     keys.forEach(function (cp) {
@@ -395,11 +395,11 @@
       var row = el('div', 'sp-row sp-acc-row');
       row.appendChild(el('span', 'sp-acc-t', chr(combo[0])));
       row.appendChild(el('span', 'muted sp-acc-eq', '= ' + chr(combo[1]) + ' + ' + chr(combo[2])));
-      row.appendChild(el('span', 'sp-acc-st ' + (st === 'ready' ? 'st-ready' : (st === 'in font' ? 'st-in' : 'st-no')), st));
+      row.appendChild(el('span', 'sp-acc-st ' + (st === 'ready' ? 'st-ready' : (st === 'in font' ? 'st-in' : 'st-no')), t(st)));
       box.appendChild(row);
     });
     els.accBtn.disabled = ready === 0;
-    els.accBtn.textContent = 'Generate missing (' + ready + ')';
+    els.accBtn.textContent = t('Generate missing') + ' (' + ready + ')';
   }
 
   function generateAccents() {
@@ -420,12 +420,12 @@
       g.adv = bg.adv;
       created++;
     });
-    els.accReport.textContent = 'Created ' + created + ', skipped ' + skipped + '.';
+    els.accReport.textContent = t('Created') + ' ' + created + ', ' + t('skipped') + ' ' + skipped + '.';
     if (created) {
       window.FontModel.save();
-      toast('Accents: created ' + created + ' glyph' + (created === 1 ? '' : 's'));
+      toast(t('Accents: created') + ' ' + created);
     } else {
-      toast('No accents to create (skipped ' + skipped + ')', false);
+      toast(t('No accents to create') + ' (' + t('skipped') + ' ' + skipped + ')', false);
     }
   }
 
@@ -467,7 +467,7 @@
     var row = el('div', 'row');
 
     var field = el('div', 'field');
-    var lbl = el('label', null, 'Sample');
+    var lbl = i18nTag(el('label'), 'Sample');
     var input = el('input');
     input.type = 'text';
     input.value = sampleText;
@@ -483,7 +483,7 @@
     field.appendChild(input);
     row.appendChild(field);
 
-    els.selInfo = el('span', 'sp-selinfo', 'no pair selected');
+    els.selInfo = el('span', 'sp-selinfo', t('no pair selected'));
     els.minus = el('button', 'btn', '− 10');
     els.plus = el('button', 'btn', '+ 10');
     els.minus.addEventListener('click', function () { nudge(-STEP); });
@@ -500,30 +500,30 @@
     els.canvas.addEventListener('keydown', onKey);
     wrap.appendChild(els.canvas);
     sample.appendChild(wrap);
-    sample.appendChild(el('div', 'sp-hint',
+    sample.appendChild(i18nTag(el('div', 'sp-hint'),
       'Click the gap between two glyphs, then drag horizontally or press ←/→ to kern in 10-unit steps. Delete removes the pair.'));
     section.appendChild(sample);
 
     var cols = el('div', 'sp-cols');
 
     var kernPanel = el('div', 'panel');
-    kernPanel.appendChild(el('h3', null, 'Kerning pairs'));
+    kernPanel.appendChild(i18nTag(el('h3'), 'Kerning pairs'));
     els.kernTable = el('div', 'sp-list');
     kernPanel.appendChild(els.kernTable);
     cols.appendChild(kernPanel);
 
     var advPanel = el('div', 'panel');
-    advPanel.appendChild(el('h3', null, 'Advance widths'));
+    advPanel.appendChild(i18nTag(el('h3'), 'Advance widths'));
     els.advList = el('div', 'sp-list');
     advPanel.appendChild(els.advList);
     cols.appendChild(advPanel);
 
     var accPanel = el('div', 'panel');
-    accPanel.appendChild(el('h3', null, 'Batch accents'));
-    accPanel.appendChild(el('div', 'sp-acc-note',
+    accPanel.appendChild(i18nTag(el('h3'), 'Batch accents'));
+    accPanel.appendChild(i18nTag(el('div', 'sp-acc-note'),
       'Builds missing Latin-1 accented glyphs as components: base at 0,0 plus the mark centered over the base width. Needs both base letter and mark glyph in the font.'));
     var accRow = el('div', 'row');
-    els.accBtn = el('button', 'btn primary', 'Generate missing');
+    els.accBtn = el('button', 'btn primary', t('Generate missing'));
     els.accBtn.addEventListener('click', generateAccents);
     els.accReport = el('span', 'sp-acc-report', '');
     accRow.appendChild(els.accBtn);

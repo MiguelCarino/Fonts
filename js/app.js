@@ -33,14 +33,14 @@
   }
 
   function openEditor() {
-    openSection('Glyph editor', 'tab-editor', function () {
+    openSection(t('Glyph editor'), 'tab-editor', function () {
       UI.selGlyph = null;
       FontModel.emit();
     });
   }
 
   function openSpacing() {
-    openSection('Spacing & kerning', 'tab-spacing');
+    openSection(t('Spacing & kerning'), 'tab-spacing');
   }
 
   // ── editor head (glyph label + pixel/vector mode toggle) ──────
@@ -65,14 +65,14 @@
       '.modal-body > #tab-editor{min-height:80vh;}';
     document.head.appendChild(style);
 
-    glyphLabel = UI.el('span', { id: 'app-glyph-label', class: 'empty' }, 'No glyph selected');
-    modeBtn = UI.el('button', { class: 'btn', onclick: toggleMode }, 'Mode');
+    glyphLabel = UI.el('span', { id: 'app-glyph-label', class: 'empty' }, t('No glyph selected'));
+    modeBtn = UI.el('button', { class: 'btn', onclick: toggleMode }, t('Mode'));
     var head = UI.el('div', { id: 'app-editor-head' }, [glyphLabel, modeBtn]);
     section.insertBefore(head, section.firstChild);
   }
 
   function toggleMode() {
-    if (UI.selGlyph == null) { UI.toast('Select a glyph first', false); return; }
+    if (UI.selGlyph == null) { UI.toast(t('Select a glyph first'), false); return; }
     var g = FontModel.ensureGlyph(UI.selGlyph);
     g.mode = g.mode === 'pixel' ? 'vector' : 'pixel';
     FontModel.save();
@@ -87,11 +87,11 @@
       glyphLabel.textContent = UI.fmtCp(cp);
       glyphLabel.classList.remove('empty');
     } else {
-      glyphLabel.textContent = 'No glyph selected';
+      glyphLabel.textContent = t('No glyph selected');
       glyphLabel.classList.add('empty');
     }
     modeBtn.disabled = cp == null;
-    modeBtn.textContent = mode === 'pixel' ? 'Switch to vector' : 'Switch to pixel';
+    modeBtn.textContent = t(mode === 'pixel' ? 'Switch to vector' : 'Switch to pixel');
 
     document.getElementById('editor-pixel').style.display = mode === 'pixel' ? '' : 'none';
     document.getElementById('editor-vector').style.display = mode === 'vector' ? '' : 'none';

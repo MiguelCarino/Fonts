@@ -274,12 +274,12 @@
     // nothing usable; a .cfont project may legitimately be empty.
     var done = function (doc, needGlyphs, cover) {
       if (!doc || (needGlyphs && !Object.keys(doc.glyphs || {}).length)) {
-        toast('Could not read ' + file.name, false);
+        toast(t('Could not read') + ' ' + file.name, false);
         return; // keep the current project (and its undo history) intact
       }
       if (cover) enableCoveredSets(doc);
       FontModel.load(doc);
-      toast('Loaded ' + file.name, true);
+      toast(t('Loaded') + ' ' + file.name, true);
     };
     var p;
     if (/\.(ttf|otf)$/.test(name)) {
@@ -299,16 +299,16 @@
         done(FontImport.fromCfont(txt), false, false);
       });
     }
-    p.catch(function () { toast('Could not read ' + file.name, false); });
+    p.catch(function () { toast(t('Could not read') + ' ' + file.name, false); });
   }
 
   function createNew() {
     var d = FontModel.doc;
     var dirty = Object.keys(d.glyphs).length > 0;
-    if (dirty && !window.confirm('Start a new font? The current project is replaced (it stays in your undo history until then).')) return;
+    if (dirty && !window.confirm(t('Start a new font? The current project is replaced (it stays in your undo history until then).'))) return;
     if (window.UI) UI.selGlyph = null;
     FontModel.load(FontModel.newProject());
-    toast('New font started — default sets enabled', true);
+    toast(t('New font started — default sets enabled'), true);
   }
 
   // ── rendering ─────────────────────────────────────────────────
@@ -318,7 +318,7 @@
     // the popup's whole point: EVERY set is on screen at once
     var addCell = function (name, count) {
       var on = isEnabled(doc, name);
-      var cell = el('span', { class: 'uigm-setcell' + (on ? ' on' : ''), title: name + (on ? ' — on: visible, editable, exported' : ' — off: hidden and excluded from export') }, [
+      var cell = el('span', { class: 'uigm-setcell' + (on ? ' on' : ''), title: name + ' — ' + t(on ? 'on: visible, editable, exported' : 'off: hidden and excluded from export') }, [
         el('span', { class: 'dot' }),
         el('span', { class: 'lbl' }, name),
         count ? el('span', { class: 'cnt' }, String(count)) : null
@@ -368,13 +368,13 @@
       var panel = el('div', { class: 'panel uigm-block open' }, [head]);
       var extras = [];
       if (partial) {
-        var note = el('div', { class: 'uigm-note' },
+        var note = i18nTag(el('div', { class: 'uigm-note' }),
           'Large set — showing only the glyphs present in the font.');
         extras.push(note);
         panel.appendChild(note);
       }
       if (!cps.length) {
-        var hint = el('div', { class: 'uigm-hint' },
+        var hint = i18nTag(el('div', { class: 'uigm-hint' }),
           name === 'Other' ? 'No glyphs outside the named sets.' : 'Empty set.');
         extras.push(hint);
         panel.appendChild(hint);
@@ -397,16 +397,16 @@
       applyCollapse(name);
     }
     if (!doc.sets.length) {
-      blocksHost.appendChild(el('div', { class: 'panel uigm-hint' },
+      blocksHost.appendChild(i18nTag(el('div', { class: 'panel uigm-hint' }),
         'No sets enabled — open Sets in the top bar and turn one on to see and edit its glyphs.'));
     }
   }
 
   // Sets live in a popup; setsGrid is non-null only while it's open.
   function openSetsModal() {
-    var m = UI.modal('Sets', function () { setsGrid = null; });
+    var m = UI.modal(t('Sets'), function () { setsGrid = null; });
     m.body.classList.add('uigm-sets-modal');
-    m.body.appendChild(el('div', { class: 'uigm-hint' },
+    m.body.appendChild(i18nTag(el('div', { class: 'uigm-hint' }),
       'On = visible, editable and exported. Off = kept in the project but hidden and left out of the font file.'));
     setsGrid = el('div', { class: 'uigm-sets' });
     m.body.appendChild(setsGrid);
@@ -452,21 +452,21 @@
       });
       // Default is a new font — no Create call-to-action needed; New is the
       // quiet reset, and Load sits with the other actions.
-      var newBtn = el('button', { class: 'btn' }, 'New');
-      newBtn.title = 'Start over with a fresh font (default sets)';
+      var newBtn = i18nTag(el('button', { class: 'btn' }), 'New');
+      i18nTitle(newBtn, 'Start over with a fresh font (default sets)');
       newBtn.addEventListener('click', createNew);
-      var loadBtn = el('button', { class: 'btn' }, 'Load font…');
-      loadBtn.title = 'Open a .cfont project, or import a TTF/OTF/WOFF/FontForge .sfd as editable glyphs (or drop a file on the page)';
+      var loadBtn = i18nTag(el('button', { class: 'btn' }), 'Load font…');
+      i18nTitle(loadBtn, 'Open a .cfont project, or import a TTF/OTF/WOFF/FontForge .sfd as editable glyphs (or drop a file on the page)');
       loadBtn.addEventListener('click', function () { input.click(); });
-      var setsBtn = el('button', { class: 'btn' }, 'Sets');
-      setsBtn.title = 'Toggle unicode sets on/off — on = visible, editable and exported';
+      var setsBtn = i18nTag(el('button', { class: 'btn' }), 'Sets');
+      i18nTitle(setsBtn, 'Toggle unicode sets on/off — on = visible, editable and exported');
       setsBtn.addEventListener('click', openSetsModal);
-      var spacingBtn = el('button', { class: 'btn' }, 'Spacing');
-      spacingBtn.title = 'Kerning pairs and the live sample line';
+      var spacingBtn = i18nTag(el('button', { class: 'btn' }), 'Spacing');
+      i18nTitle(spacingBtn, 'Kerning pairs and the live sample line');
       spacingBtn.addEventListener('click', function () { UI.switchTab('spacing'); });
-      var previewBtn = el('button', { class: 'btn' }, 'Preview');
+      var previewBtn = i18nTag(el('button', { class: 'btn' }), 'Preview');
       previewBtn.addEventListener('click', function () { window.UIPreview.open(); });
-      var exportBtn = el('button', { class: 'btn primary' }, 'Export');
+      var exportBtn = i18nTag(el('button', { class: 'btn primary' }), 'Export');
       exportBtn.addEventListener('click', function () { window.UIExport.open(); });
 
       // The app's actions live in the shared navbar (single top bar): the

@@ -97,7 +97,7 @@
     try {
       download(window.FontBuild.toTTF(doc()), fileBase() + '.ttf', 'font/ttf');
     } catch (e) {
-      toast('TTF build failed: ' + e.message, false);
+      toast(t('TTF build failed:') + ' ' + e.message, false);
     }
   }
 
@@ -106,13 +106,13 @@
     try {
       ttf = window.FontBuild.toTTF(doc());
     } catch (e) {
-      toast('WOFF build failed: ' + e.message, false);
+      toast(t('WOFF build failed:') + ' ' + e.message, false);
       return;
     }
     window.FontBuild.toWOFF(ttf).then(function (woff) {
       download(woff, fileBase() + '.woff', 'font/woff');
     }).catch(function (e) {
-      toast('WOFF build failed: ' + e.message, false);
+      toast(t('WOFF build failed:') + ' ' + e.message, false);
     });
   }
 
@@ -142,11 +142,11 @@
       bindMeta(f[0], input);
       inputs[f[0]] = input;
       metaGrid.appendChild(el('div', { class: 'field' }, [
-        el('label', {}, f[1]), input
+        el('label', {}, t(f[1])), input
       ]));
     });
     sec.appendChild(el('div', { class: 'panel' }, [
-      el('h3', {}, 'Font metadata'), metaGrid
+      el('h3', {}, t('Font metadata')), metaGrid
     ]));
 
     // license
@@ -154,34 +154,33 @@
     LICENSES.forEach(function (lic) {
       var card = el('div', { class: 'lic-card' }, [
         el('h4', {}, lic.name),
-        el('p', {}, lic.blurb)
+        el('p', {}, t(lic.blurb))
       ]);
       card.addEventListener('click', function () { pickLicense(lic.id); });
       cards[lic.id] = card;
       licGrid.appendChild(card);
     });
     sec.appendChild(el('div', { class: 'panel' }, [
-      el('h3', {}, 'License'),
+      el('h3', {}, t('License')),
       licGrid,
       el('div', { class: 'lic-note' },
-        'Fonts you create here are 100% yours; this choice is embedded in the ' +
-        'exported file’s metadata.')
+        t('Fonts you create here are 100% yours; this choice is embedded in the exported file’s metadata.'))
     ]));
 
     // downloads — only glyphs in enabled sets are compiled in
-    var ttfBtn = el('button', { class: 'btn primary' }, 'Download TTF');
+    var ttfBtn = el('button', { class: 'btn primary' }, t('Download TTF'));
     ttfBtn.addEventListener('click', onTTF);
-    var woffBtn = el('button', { class: 'btn' }, 'Download WOFF');
+    var woffBtn = el('button', { class: 'btn' }, t('Download WOFF'));
     woffBtn.addEventListener('click', onWOFF);
-    var cfontBtn = el('button', { class: 'btn' }, 'Download .cfont');
+    var cfontBtn = el('button', { class: 'btn' }, t('Download .cfont'));
     cfontBtn.addEventListener('click', onCfont);
 
     sec.appendChild(el('div', { class: 'panel' }, [
-      el('h3', {}, 'Download'),
+      el('h3', {}, t('Download')),
       el('div', { class: 'row' }, [ttfBtn, woffBtn, cfontBtn]),
       el('div', { class: 'export-note' },
-        'TTF/WOFF include the ' + exportedCount() + ' glyph(s) in the enabled sets; ' +
-        'the .cfont project keeps everything.')
+        t('TTF/WOFF include the glyphs in the enabled sets') + ' (' + exportedCount() + '); ' +
+        t('the .cfont project keeps everything.'))
     ]));
 
     renderMeta();
@@ -192,7 +191,7 @@
     // Modal, not a tab: DOM lives only while the popup is open.
     open: function () {
       injectStyle();
-      var m = window.UI.modal('Export', function () {
+      var m = window.UI.modal(t('Export'), function () {
         inputs = {};
         cards = {};
       });

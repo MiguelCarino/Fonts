@@ -82,19 +82,19 @@
     if (!statusLine) return; // modal closed
     var seq = ++compileSeq;
     if (typeof FontFace === 'undefined') {
-      setStatus('warn', 'FontFace API unavailable in this browser — live preview disabled');
+      setStatus('warn', t('FontFace API unavailable in this browser — live preview disabled'));
       return;
     }
-    setStatus('', 'compiling…');
+    setStatus('', t('compiling…'));
     Promise.resolve().then(function () {
       return window.FontBuild.previewInstall(window.FontModel.doc);
     }).then(function (fam) {
       if (seq !== compileSeq) return;
       applyFamily(fam);
-      setStatus('ok', 'compiled ' + glyphCount() + ' glyphs');
+      setStatus('ok', t('Compiled glyphs:') + ' ' + glyphCount());
     }).catch(function (err) {
       if (seq !== compileSeq) return;
-      setStatus('warn', 'compile failed: ' + (err && err.message ? err.message : String(err)));
+      setStatus('warn', t('compile failed:') + ' ' + (err && err.message ? err.message : String(err)));
     });
   }
 
@@ -112,7 +112,7 @@
     var controls = el('div', 'panel uipreview-controls');
 
     var textField = el('div', 'field uipreview-text-field');
-    var textLbl = el('label', null, 'Sample text');
+    var textLbl = el('label', null, t('Sample text'));
     textarea = document.createElement('textarea');
     textarea.className = 'uipreview-textarea';
     textarea.value = PANGRAM;
@@ -121,7 +121,7 @@
     textField.appendChild(textarea);
 
     var sizeField = el('div', 'field uipreview-size-field');
-    var sizeLbl = el('label', null, 'Size');
+    var sizeLbl = el('label', null, t('Size'));
     var sizeRow = el('div', 'uipreview-sizerow');
     slider = document.createElement('input');
     slider.type = 'range';
@@ -143,18 +143,18 @@
     controls.appendChild(statusLine);
     if (typeof FontFace === 'undefined') {
       controls.appendChild(el('div', 'uipreview-note',
-        'This browser does not support the FontFace API — the preview below falls back to a system font.'));
+        t('This browser does not support the FontFace API — the preview below falls back to a system font.')));
     }
     section.appendChild(controls);
 
     var livePanel = el('div', 'panel');
-    livePanel.appendChild(el('h3', null, 'Live preview'));
+    livePanel.appendChild(el('h3', null, t('Live preview')));
     renderDiv = el('div', 'uipreview-render');
     livePanel.appendChild(renderDiv);
     section.appendChild(livePanel);
 
     var wfPanel = el('div', 'panel');
-    wfPanel.appendChild(el('h3', null, 'Waterfall'));
+    wfPanel.appendChild(el('h3', null, t('Waterfall')));
     var wfWrap = el('div', 'uipreview-wf-wrap');
     waterfallLines = [];
     for (var i = 0; i < WATERFALL_SIZES.length; i++) {
@@ -181,7 +181,7 @@
   var UIPreview = {
     // Modal, not a tab: DOM lives only while the popup is open.
     open: function () {
-      var m = window.UI.modal('Preview', function () {
+      var m = window.UI.modal(t('Preview'), function () {
         if (debounceTimer) { clearTimeout(debounceTimer); debounceTimer = null; }
         textarea = slider = sizeLabel = statusLine = renderDiv = null;
         waterfallLines = [];

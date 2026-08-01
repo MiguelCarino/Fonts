@@ -256,25 +256,25 @@
 
     var bar = el('div', 'panel uiv-toolbar');
     toolbarEls.glyph = el('span', 'uiv-glyphlbl', '');
-    toolbarEls.pen = el('button', 'btn', 'Pen');
-    toolbarEls.select = el('button', 'btn', 'Select');
-    toolbarEls.snap = el('button', 'btn', 'Snap ' + SNAP);
-    toolbarEls.fitBtn = el('button', 'btn', 'Fit');
-    toolbarEls.clearBtn = el('button', 'btn', 'Clear');
-    toolbarEls.clearBtn.title = 'Delete every contour of this glyph (undoable; components stay)';
+    toolbarEls.pen = i18nTag(el('button', 'btn'), 'Pen');
+    toolbarEls.select = i18nTag(el('button', 'btn'), 'Select');
+    toolbarEls.snap = el('button', 'btn', t('Snap') + ' ' + SNAP);
+    toolbarEls.fitBtn = i18nTag(el('button', 'btn'), 'Fit');
+    toolbarEls.clearBtn = i18nTag(el('button', 'btn'), 'Clear');
+    i18nTitle(toolbarEls.clearBtn, 'Delete every contour of this glyph (undoable; components stay)');
     toolbarEls.pen.addEventListener('click', function () { setTool('pen'); });
     toolbarEls.select.addEventListener('click', function () { setTool('select'); });
     toolbarEls.snap.addEventListener('click', function () { snapOn = !snapOn; renderScene(); updateToolbar(); });
     toolbarEls.fitBtn.addEventListener('click', function () { fit(); renderScene(); });
     toolbarEls.clearBtn.addEventListener('click', function () {
       var g = curGlyph();
-      if (!g) { toast('Select a glyph first', false); return; }
+      if (!g) { toast(t('Select a glyph first'), false); return; }
       if (!g.contours.length) return;
       finalizePen(false);
       g.contours = [];
       FontModel.save();
     });
-    var hint = el('span', 'uiv-hint',
+    var hint = i18nTag(el('span', 'uiv-hint'),
       'pen: click=corner · drag=smooth · click 1st pt=close · esc=stop | select: dblclick seg=insert · dblclick pt=corner/smooth · del=remove | space/mid-drag=pan · wheel=zoom');
     bar.appendChild(toolbarEls.glyph);
     bar.appendChild(toolbarEls.pen);
@@ -297,7 +297,7 @@
     svg.appendChild(sceneG);
     svg.appendChild(L.screen);
     statusEl = el('div', 'uiv-status', '');
-    emptyEl = el('div', 'uiv-empty', 'No glyph selected — pick one in the Glyphs tab.');
+    emptyEl = i18nTag(el('div', 'uiv-empty'), 'No glyph selected — pick one in the Glyphs tab.');
     wrap.appendChild(svg);
     wrap.appendChild(statusEl);
     wrap.appendChild(emptyEl);
@@ -327,14 +327,14 @@
 
   function buildComponentsPanel() {
     var p = el('div', 'panel');
-    p.appendChild(el('div', 'uiv-ptitle', 'Components'));
+    p.appendChild(i18nTag(el('div', 'uiv-ptitle'), 'Components'));
     sideEls.compList = el('div');
     p.appendChild(sideEls.compList);
     var addRow = el('div', 'uiv-addrow');
     sideEls.compInput = el('input');
     sideEls.compInput.type = 'text';
     sideEls.compInput.placeholder = 'A / U+0041 / 65';
-    var addBtn = el('button', 'btn', 'Add');
+    var addBtn = i18nTag(el('button', 'btn'), 'Add');
     addBtn.addEventListener('click', addComponent);
     sideEls.compInput.addEventListener('keydown', function (e) { if (e.key === 'Enter') addComponent(); });
     addRow.appendChild(sideEls.compInput);
@@ -345,23 +345,23 @@
 
   function buildSvgPastePanel() {
     var p = el('div', 'panel');
-    p.appendChild(el('div', 'uiv-ptitle', 'Paste SVG path'));
+    p.appendChild(i18nTag(el('div', 'uiv-ptitle'), 'Paste SVG path'));
     sideEls.svgD = el('textarea');
     sideEls.svgD.placeholder = 'M0 0 L500 0 ... Z';
     p.appendChild(sideEls.svgD);
     var row = el('div', 'uiv-scalerow');
-    var lbl = el('label', null, 'scale');
+    var lbl = i18nTag(el('label'), 'scale');
     sideEls.svgScale = el('input');
     sideEls.svgScale.type = 'number';
     sideEls.svgScale.step = 'any';
     sideEls.svgScale.value = '1';
-    var btn = el('button', 'btn', 'Add contours');
+    var btn = i18nTag(el('button', 'btn'), 'Add contours');
     btn.addEventListener('click', pasteSvgPath);
     row.appendChild(lbl);
     row.appendChild(sideEls.svgScale);
     row.appendChild(btn);
     p.appendChild(row);
-    p.appendChild(el('div', 'uiv-hint', 'y is flipped to font coords (baseline up).'));
+    p.appendChild(i18nTag(el('div', 'uiv-hint'), 'y is flipped to font coords (baseline up).'));
     return p;
   }
 
@@ -413,7 +413,7 @@
 
   function buildBgPanel() {
     var p = el('div', 'panel');
-    p.appendChild(el('div', 'uiv-ptitle', 'Background image'));
+    p.appendChild(i18nTag(el('div', 'uiv-ptitle'), 'Background image'));
     var input = document.createElement('input');
     input.type = 'file';
     input.accept = 'image/*';
@@ -429,15 +429,15 @@
           applyBg();
           renderScene();
         };
-        probe.onerror = function () { toast('Could not load image', false); };
+        probe.onerror = function () { toast(t('Could not load image'), false); };
         probe.src = url;
       }
       input.value = '';
     });
     var row = el('div', 'uiv-addrow');
-    var load = el('button', 'btn', 'Load…');
+    var load = i18nTag(el('button', 'btn'), 'Load…');
     load.addEventListener('click', function () { input.click(); });
-    var remove = el('button', 'btn', 'Remove');
+    var remove = i18nTag(el('button', 'btn'), 'Remove');
     remove.addEventListener('click', function () {
       if (bgUrl) URL.revokeObjectURL(bgUrl);
       bgUrl = null;
@@ -445,8 +445,8 @@
       if (bgMoveBtn) bgMoveBtn.classList.remove('active');
       applyBg();
     });
-    bgMoveBtn = el('button', 'btn', 'Move');
-    bgMoveBtn.title = 'Drag the image instead of drawing';
+    bgMoveBtn = i18nTag(el('button', 'btn'), 'Move');
+    i18nTitle(bgMoveBtn, 'Drag the image instead of drawing');
     bgMoveBtn.addEventListener('click', function () {
       bgMove = !bgMove;
       bgMoveBtn.classList.toggle('active', bgMove);
@@ -457,7 +457,7 @@
     row.appendChild(input);
     p.appendChild(row);
     var srow = el('div', 'uiv-scalerow');
-    var slbl = el('label', null, 'Opacity');
+    var slbl = i18nTag(el('label'), 'Opacity');
     var slider = document.createElement('input');
     slider.type = 'range';
     slider.min = '0';
@@ -473,7 +473,7 @@
     srow.appendChild(slider);
     p.appendChild(srow);
     var zrow = el('div', 'uiv-scalerow');
-    var zlbl = el('label', null, 'Scale');
+    var zlbl = i18nTag(el('label'), 'Scale');
     var zslider = document.createElement('input');
     zslider.type = 'range';
     zslider.min = '10';
@@ -494,13 +494,13 @@
     zrow.appendChild(zlbl);
     zrow.appendChild(zslider);
     p.appendChild(zrow);
-    p.appendChild(el('div', 'uiv-hint', 'Loads covering the whole view; toggle Move and drag it into place. Session-only tracing aid — never exported.'));
+    p.appendChild(i18nTag(el('div', 'uiv-hint'), 'Loads covering the whole view; toggle Move and drag it into place. Session-only tracing aid — never exported.'));
     return p;
   }
 
   function buildOnionPanel() {
     var p = el('div', 'panel');
-    p.appendChild(el('div', 'uiv-ptitle', 'Onion skin'));
+    p.appendChild(i18nTag(el('div', 'uiv-ptitle'), 'Onion skin'));
     sideEls.onionSel = el('select');
     sideEls.onionSel.style.width = '100%';
     sideEls.onionSel.addEventListener('change', function () {
@@ -530,7 +530,7 @@
     clearNode(sideEls.compList);
     var comps = (g && g.components) || [];
     if (!comps.length) {
-      sideEls.compList.appendChild(el('div', 'uiv-hint', 'No references.'));
+      sideEls.compList.appendChild(el('div', 'uiv-hint', t('No references.')));
     }
     comps.forEach(function (c, idx) {
       var row = el('div', 'uiv-comp-row');
@@ -544,7 +544,7 @@
         c.dy = Math.round(Number(dy.value) || 0); FontModel.save();
       });
       var x = el('button', 'uiv-x', '×');
-      x.title = 'Remove reference';
+      x.title = t('Remove reference');
       x.addEventListener('click', function () {
         g.components.splice(idx, 1); FontModel.save();
       });
@@ -557,7 +557,7 @@
     // onion picker options
     var selVal = onionCp === null ? '' : String(onionCp);
     clearNode(sideEls.onionSel);
-    var optNone = el('option', null, 'None');
+    var optNone = el('option', null, t('None'));
     optNone.value = '';
     sideEls.onionSel.appendChild(optNone);
     var keys = Object.keys(FontModel.doc.glyphs).map(Number).sort(function (a, b) { return a - b; });
@@ -1261,31 +1261,31 @@
 
   function addComponent() {
     var g = curGlyph();
-    if (!g) { toast('Select a glyph first', false); return; }
+    if (!g) { toast(t('Select a glyph first'), false); return; }
     var cp = parseCp(sideEls.compInput.value);
     if (cp === null || cp === undefined || !isFinite(cp)) {
-      toast('Enter a character, U+hex or decimal codepoint', false);
+      toast(t('Enter a character, U+hex or decimal codepoint'), false);
       return;
     }
-    if (window.UI && cp === UI.selGlyph) { toast('A glyph cannot reference itself', false); return; }
+    if (window.UI && cp === UI.selGlyph) { toast(t('A glyph cannot reference itself'), false); return; }
     g.components.push({ ref: cp, dx: 0, dy: 0 });
     sideEls.compInput.value = '';
-    if (!FontModel.getGlyph(cp)) toast(fmtCp(cp) + ' is empty — draw it to see the reference', false);
+    if (!FontModel.getGlyph(cp)) toast(fmtCp(cp) + ' ' + t('is empty — draw it to see the reference'), false);
     FontModel.save();
   }
 
   function pasteSvgPath() {
     var g = curGlyph();
-    if (!g) { toast('Select a glyph first', false); return; }
+    if (!g) { toast(t('Select a glyph first'), false); return; }
     var d = sideEls.svgD.value;
-    if (!d.trim()) { toast('Paste an SVG path "d" string first', false); return; }
+    if (!d.trim()) { toast(t('Paste an SVG path "d" string first'), false); return; }
     var scale = Number(sideEls.svgScale.value);
     if (!isFinite(scale) || scale === 0) scale = 1;
     var cs = FontImport.svgPathToContours(d, scale, true);
-    if (!cs.length) { toast('No contours parsed from that path', false); return; }
+    if (!cs.length) { toast(t('No contours parsed from that path'), false); return; }
     for (var i = 0; i < cs.length; i++) g.contours.push(cs[i]);
     sideEls.svgD.value = '';
-    toast('Added ' + cs.length + ' contour' + (cs.length === 1 ? '' : 's'));
+    toast(t('Contours added:') + ' ' + cs.length);
     FontModel.save();
   }
 

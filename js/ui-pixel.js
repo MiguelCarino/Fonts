@@ -49,7 +49,7 @@
 
   function numField(labelText, id) {
     var f = mk('div', 'field');
-    var lab = mk('label', null, labelText);
+    var lab = i18nTag(mk('label'), labelText);
     lab.htmlFor = id;
     var inp = document.createElement('input');
     inp.type = 'number';
@@ -288,10 +288,10 @@
         if (g.px[r].charAt(c) === '1') { rightmost = c; break; }
       }
     }
-    if (rightmost < 0) { toast('Glyph is empty — advance unchanged', false); return false; }
+    if (rightmost < 0) { toast(t('Glyph is empty — advance unchanged'), false); return false; }
     var cellUnit = doc.meta.upm / grid.h;
     g.adv = clampInt(Math.round((rightmost + 1.5) * cellUnit), g.adv, 0, 32767);
-    toast('Advance set to ' + g.adv);
+    toast(t('Advance set to') + ' ' + g.adv);
   }
 
   function onAdvChange() {
@@ -355,13 +355,13 @@
     var cp = selCp();
     var g = cp == null ? null : viewGlyph(cp);
     if (cp == null) {
-      hintEl.textContent = 'No glyph selected — pick one in the Glyphs tab.';
+      hintEl.textContent = t('No glyph selected — pick one in the Glyphs tab.');
       hintEl.style.display = '';
       editorWrap.style.display = 'none';
       return;
     }
     if (g && g.mode === 'vector') {
-      hintEl.textContent = fmtCp(cp) + ' is a vector glyph — switch it to pixel mode or use the vector editor.';
+      hintEl.textContent = fmtCp(cp) + ' ' + t('is a vector glyph — switch it to pixel mode or use the vector editor.');
       hintEl.style.display = '';
       editorWrap.style.display = 'none';
       return;
@@ -424,10 +424,11 @@
     var legend = mk('div', 'uipixel-legend');
     var items = [['#eab308', 'baseline'], ['rgba(234,179,8,.35)', 'x-height / cap'], ['rgba(34,197,94,.7)', 'advance']];
     for (var j = 0; j < items.length; j++) {
-      var s = mk('span', null, items[j][1]);
+      var s = mk('span');
       var sw = mk('i');
       sw.style.background = items[j][0];
-      s.insertBefore(sw, s.firstChild);
+      s.appendChild(sw);
+      s.appendChild(i18nTag(mk('span'), items[j][1]));
       legend.appendChild(s);
     }
     panel.appendChild(legend);
@@ -437,10 +438,10 @@
     editorWrap.appendChild(side);
 
     var toolsPanel = mk('div', 'panel');
-    toolsPanel.appendChild(mk('div', 'uipixel-ptitle', 'Tools'));
+    toolsPanel.appendChild(i18nTag(mk('div', 'uipixel-ptitle'), 'Tools'));
     var toolsRow = mk('div', 'row');
-    eraseBtn = mk('button', 'btn', 'Erase');
-    eraseBtn.title = 'Toggle erase mode (right-click always erases)';
+    eraseBtn = i18nTag(mk('button', 'btn'), 'Erase');
+    i18nTitle(eraseBtn, 'Toggle erase mode (right-click always erases)');
     eraseBtn.addEventListener('click', function () {
       eraseMode = !eraseMode;
       eraseBtn.classList.toggle('active', eraseMode);
@@ -455,7 +456,7 @@
       ['↓', function () { withGlyph(function (g) { opShift(g, 0, 1); }); }]
     ];
     for (var i = 0; i < ops.length; i++) {
-      var b = mk('button', 'btn', ops[i][0]);
+      var b = i18nTag(mk('button', 'btn'), ops[i][0]);
       b.addEventListener('click', ops[i][1]);
       toolsRow.appendChild(b);
     }
@@ -464,7 +465,7 @@
 
     // advance width
     var advPanel = mk('div', 'panel');
-    advPanel.appendChild(mk('div', 'uipixel-ptitle', 'Advance'));
+    advPanel.appendChild(i18nTag(mk('div', 'uipixel-ptitle'), 'Advance'));
     var advRow = mk('div', 'row');
     var advF = numField('Advance (units)', 'uipixel-adv');
     advInput = advF.input;
@@ -472,8 +473,8 @@
     advInput.max = 32767;
     advInput.addEventListener('change', onAdvChange);
     advRow.appendChild(advF.field);
-    var fit = mk('button', 'btn', 'Auto-fit');
-    fit.title = 'Rightmost filled column + 1.5 cells';
+    var fit = i18nTag(mk('button', 'btn'), 'Auto-fit');
+    i18nTitle(fit, 'Rightmost filled column + 1.5 cells');
     fit.style.alignSelf = 'flex-end';
     fit.addEventListener('click', function () { withGlyph(opAutoFit); });
     advRow.appendChild(fit);
@@ -482,7 +483,7 @@
 
     // per-font grid settings
     var settings = mk('div', 'panel');
-    settings.appendChild(mk('div', 'uipixel-ptitle', 'Grid (per font)'));
+    settings.appendChild(i18nTag(mk('div', 'uipixel-ptitle'), 'Grid (per font)'));
     var srow = mk('div', 'row');
     var wF = numField('Grid W', 'uipixel-gw');
     var hF = numField('Grid H', 'uipixel-gh');
@@ -497,12 +498,12 @@
     srow.appendChild(hF.field);
     srow.appendChild(bF.field);
     settings.appendChild(srow);
-    settings.appendChild(mk('div', 'uipixel-note', 'Changing the grid re-anchors every glyph to the baseline; overflowing pixels are clipped.'));
+    settings.appendChild(i18nTag(mk('div', 'uipixel-note'), 'Changing the grid re-anchors every glyph to the baseline; overflowing pixels are clipped.'));
     side.appendChild(settings);
 
     // reference background image
     var bgPanel = mk('div', 'panel');
-    bgPanel.appendChild(mk('div', 'uipixel-ptitle', 'Background image'));
+    bgPanel.appendChild(i18nTag(mk('div', 'uipixel-ptitle'), 'Background image'));
     var bgInput = document.createElement('input');
     bgInput.type = 'file';
     bgInput.accept = 'image/*';
@@ -512,23 +513,23 @@
       bgInput.value = '';
     });
     var bgRow = mk('div', 'row');
-    var bgLoad = mk('button', 'btn', 'Load image…');
+    var bgLoad = i18nTag(mk('button', 'btn'), 'Load image…');
     bgLoad.addEventListener('click', function () { bgInput.click(); });
-    var bgRemove = mk('button', 'btn', 'Remove');
+    var bgRemove = i18nTag(mk('button', 'btn'), 'Remove');
     bgRemove.addEventListener('click', removeBg);
     bgRow.appendChild(bgLoad);
     bgRow.appendChild(bgRemove);
     bgRow.appendChild(bgInput);
     bgPanel.appendChild(bgRow);
-    var moveBtn = mk('button', 'btn', 'Move');
-    moveBtn.title = 'Drag the image instead of painting';
+    var moveBtn = i18nTag(mk('button', 'btn'), 'Move');
+    i18nTitle(moveBtn, 'Drag the image instead of painting');
     moveBtn.addEventListener('click', function () {
       bgMove = !bgMove;
       moveBtn.classList.toggle('active', bgMove);
     });
     bgRow.appendChild(moveBtn);
     var opRow = mk('div', 'row');
-    var opLbl = mk('label', 'lbl', 'Opacity');
+    var opLbl = i18nTag(mk('label', 'lbl'), 'Opacity');
     var opSlider = document.createElement('input');
     opSlider.type = 'range';
     opSlider.min = '0';
@@ -543,7 +544,7 @@
     opRow.appendChild(opSlider);
     bgPanel.appendChild(opRow);
     var scRow = mk('div', 'row');
-    var scLbl = mk('label', 'lbl', 'Scale');
+    var scLbl = i18nTag(mk('label', 'lbl'), 'Scale');
     var scSlider = document.createElement('input');
     scSlider.type = 'range';
     scSlider.min = '10';
@@ -557,7 +558,7 @@
     scRow.appendChild(scLbl);
     scRow.appendChild(scSlider);
     bgPanel.appendChild(scRow);
-    bgPanel.appendChild(mk('div', 'uipixel-note', 'Covers the canvas; toggle Move to drag it into place. Session-only tracing aid — never exported with the font.'));
+    bgPanel.appendChild(i18nTag(mk('div', 'uipixel-note'), 'Covers the canvas; toggle Move to drag it into place. Session-only tracing aid — never exported with the font.'));
     side.appendChild(bgPanel);
   }
 
@@ -567,7 +568,7 @@
     bgUrl = URL.createObjectURL(file);
     var img = new Image();
     img.onload = function () { bgImg = img; bgX = 0; bgY = 0; paintCanvas(); };
-    img.onerror = function () { toast('Could not load image', false); };
+    img.onerror = function () { toast(t('Could not load image'), false); };
     img.src = bgUrl;
   }
 
