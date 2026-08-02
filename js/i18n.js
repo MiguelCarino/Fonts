@@ -9,6 +9,10 @@
 
 var I18N = {
     es: {
+        'Late shift.': 'Turno nocturno.',
+        'Good morning.': 'Buenos días.',
+        'Good afternoon.': 'Buenas tardes.',
+        'Good evening.': 'Buenas noches.',
         // Top bar actions
         'New': 'Nuevo',
         'Load font…': 'Cargar fuente…',
@@ -147,6 +151,10 @@ var I18N = {
         'WOFF build failed:': 'Fallo al generar WOFF:',
     },
     'pt-BR': {
+        'Late shift.': 'Turno da noite.',
+        'Good morning.': 'Bom dia.',
+        'Good afternoon.': 'Boa tarde.',
+        'Good evening.': 'Boa noite.',
         'New': 'Novo',
         'Load font…': 'Carregar fonte…',
         'Sets': 'Conjuntos',
@@ -277,6 +285,10 @@ var I18N = {
         'WOFF build failed:': 'Falha ao gerar WOFF:',
     },
     ja: {
+        'Late shift.': '夜勤お疲れさま。',
+        'Good morning.': 'おはようございます。',
+        'Good afternoon.': 'こんにちは。',
+        'Good evening.': 'こんばんは。',
         'New': '新規',
         'Load font…': 'フォントを開く…',
         'Sets': 'セット',
@@ -407,6 +419,10 @@ var I18N = {
         'WOFF build failed:': 'WOFFの生成に失敗:',
     },
     ru: {
+        'Late shift.': 'Ночная смена.',
+        'Good morning.': 'Доброе утро.',
+        'Good afternoon.': 'Добрый день.',
+        'Good evening.': 'Добрый вечер.',
         'New': 'Создать',
         'Load font…': 'Загрузить шрифт…',
         'Sets': 'Наборы',
