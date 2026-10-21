@@ -5,6 +5,8 @@ Draw glyphs pixel-by-pixel or with a vector pen, kern them, preview live, and
 export a working TTF/WOFF — entirely client-side. Nothing you draw ever leaves
 your machine: no build step, no CDN, no network calls, everything vendored.
 
+![Carino Fonts](screenshot.webp)
+
 ## Features by version
 
 All three versions live in this one codebase.
