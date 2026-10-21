@@ -1,6 +1,6 @@
 # Carino Fonts
 
-Browser font editor at [fonts.carino.systems](https://fonts.carino.systems).
+Browser font editor at [font.carino.systems](https://font.carino.systems/).
 Draw glyphs pixel-by-pixel or with a vector pen, kern them, preview live, and
 export a working TTF/WOFF — entirely client-side. Nothing you draw ever leaves
 your machine: no build step, no CDN, no network calls, everything vendored.
