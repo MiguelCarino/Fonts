@@ -380,7 +380,7 @@
     var style = document.createElement('style');
     style.id = 'uipixel-style';
     style.textContent = [
-      '#editor-pixel .uipixel-hint { color: var(--text-dim); font-size: var(--fs-sec); }',
+      '#editor-pixel .uipixel-hint { color: var(--text-sec); font-size: var(--fs-sec); }',
       '#editor-pixel .uipixel-num { width: 76px; }',
       '#editor-pixel .uipixel-title { font-family: "IBM Plex Mono", monospace; font-size: var(--fs-lg); color: var(--accent); font-weight: 700; }',
       '#editor-pixel .uipixel-canvas { cursor: crosshair; touch-action: none; border: 1px solid var(--border); border-radius: 6px; align-self: flex-start; }',
@@ -393,7 +393,7 @@
       '#editor-pixel .uipixel-canvaspanel { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 12px; align-items: flex-start; }',
       '#editor-pixel .uipixel-side { width: 272px; flex-shrink: 0; display: flex; flex-direction: column; gap: 14px; }',
       '#editor-pixel .uipixel-side .panel { padding: 12px 14px; }',
-      '#editor-pixel .uipixel-ptitle { font-family: "IBM Plex Mono", monospace; font-size: var(--fs-label); font-weight: 700; text-transform: uppercase; letter-spacing: .1em; color: var(--text-dim); margin-bottom: 10px; }',
+      '#editor-pixel .uipixel-ptitle { font-family: "IBM Plex Mono", monospace; font-size: var(--fs-label); font-weight: 700; text-transform: uppercase; letter-spacing: .1em; color: var(--text-sec); margin-bottom: 10px; }',
       '#editor-pixel .uipixel-side .row { row-gap: 8px; }'
     ].join('\n');
     root.appendChild(style);

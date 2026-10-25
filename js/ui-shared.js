@@ -38,7 +38,7 @@
     if (ok === undefined) ok = true;
     if (toastNode) { toastNode.remove(); toastNode = null; }
     if (toastTimer) clearTimeout(toastTimer);
-    toastNode = el('div', { class: 'toast ' + (ok ? 'ok' : 'err') }, msg);
+    toastNode = el('div', { class: 'toast show ' + (ok ? 'ok' : 'err'), role: 'status' }, msg);
     document.body.appendChild(toastNode);
     toastTimer = setTimeout(function () {
       if (toastNode) { toastNode.remove(); toastNode = null; }
@@ -55,20 +55,21 @@
     return ('U+' + hex + ' ' + ch).trim();
   }
 
-  // One modal at a time; returns { body, close }. Closes on ✕, backdrop
-  // click or Escape; onClose (optional) runs exactly once however it closes.
+  // One modal at a time (Branding's .modal-scrim/.modal); returns
+  // { body, box, close }. Closes on ✕, scrim click or Escape; onClose
+  // (optional) runs exactly once however it closes.
   var openModal = null;
 
   function modal(title, onClose) {
     if (openModal) openModal.close();
     var closed = false;
     var body = el('div', { class: 'modal-body' });
-    var closeBtn = el('button', { class: 'btn modal-close' }, '✕');
-    var box = el('div', { class: 'modal-box' }, [
-      el('div', { class: 'modal-head' }, [el('h3', {}, title), closeBtn]),
+    var closeBtn = el('button', { type: 'button', class: 'modal-x', 'aria-label': t('Close') }, '✕');
+    var box = el('div', { class: 'modal fm', role: 'dialog', 'aria-modal': 'true' }, [
+      el('div', { class: 'modal-head' }, [el('div', { class: 'modal-title' }, title), closeBtn]),
       body
     ]);
-    var overlay = el('div', { class: 'modal-overlay' }, box);
+    var overlay = el('div', { class: 'modal-scrim fm-scrim' }, box);
     function close() {
       if (closed) return;
       closed = true;
@@ -87,7 +88,7 @@
     document.addEventListener('keydown', onKey, true);
     document.body.appendChild(overlay);
     openModal = { close: close };
-    return { body: body, close: close };
+    return { body: body, box: box, close: close };
   }
 
   var UI = {

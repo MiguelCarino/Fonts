@@ -24,7 +24,7 @@
       holder.appendChild(section);
       if (onClose) onClose();
     });
-    m.body.parentElement.classList.add('wide');
+    m.box.classList.add('wide');
     m.body.appendChild(section);
     // re-render after the section is visible (the vector editor fits its
     // viewport on the first render with a non-zero width)
@@ -54,7 +54,7 @@
     style.id = 'app-styles';
     style.textContent =
       '#app-editor-head{display:flex;align-items:center;gap:12px;flex-shrink:0;' +
-      'background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);' +
+      'background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);' +
       'padding:10px 14px;}' +
       '#app-glyph-label{font-family:"IBM Plex Mono",monospace;font-size:var(--fs-mono);' +
       'color:var(--accent);font-weight:700;}' +
@@ -117,6 +117,55 @@
     });
   }
 
+  // ── empty state + navbar Export menu ──────────────────────────
+  // The short hero shows while the font holds no drawn glyph and the visitor
+  // has not started one; Start blank, a loaded file or the sample end it.
+
+  var started = false;
+
+  function hasWork() {
+    var d = FontModel.doc;
+    if (!d) return false;
+    for (var k in d.glyphs) {
+      if (window.UIGlyphMap && UIGlyphMap.hasInk ? UIGlyphMap.hasInk(d.glyphs[k], d, 0) : true) return true;
+    }
+    return false;
+  }
+
+  function renderEmpty() {
+    if (hasWork()) started = true;
+    var empty = !started;
+    document.body.classList.toggle('fonts-empty', empty);
+    document.getElementById('fontsHero').hidden = !empty;
+  }
+
+  function wireEmpty() {
+    var start = function () { started = true; renderEmpty(); };
+    document.getElementById('heroBlankBtn').addEventListener('click', function () {
+      UI.selGlyph = null;
+      FontModel.load(FontModel.newProject());
+      start();
+    });
+    document.getElementById('heroSampleBtn').addEventListener('click', function () {
+      UI.selGlyph = null;
+      FontModel.load(window.FontSample.project());
+      start();
+      UI.toast(t('Opened the sample font'), true);
+    });
+    var drop = document.getElementById('heroDrop');
+    var pick = function () { if (UIGlyphMap.pickFile) UIGlyphMap.pickFile(); };
+    drop.addEventListener('click', pick);
+    drop.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); pick(); }
+    });
+    drop.addEventListener('dragenter', function () { drop.classList.add('dragover'); });
+    drop.addEventListener('dragleave', function (e) { if (!drop.contains(e.relatedTarget)) drop.classList.remove('dragover'); });
+    drop.addEventListener('drop', function () { drop.classList.remove('dragover'); });
+
+    document.getElementById('exportFontBtn').addEventListener('click', function () { window.UIExport.open(); });
+    document.getElementById('exportProjectBtn').addEventListener('click', function () { window.UIExport.saveProject(); });
+  }
+
   function bootDoc() {
     var local = FontModel.loadLocal();
     // default is a fresh new font; the autosave restores the last session
@@ -129,6 +178,8 @@
     wireKeyboard();
     initModules();
     FontModel.onChange(renderEditorHead);
+    FontModel.onChange(renderEmpty);
+    wireEmpty();
     bootDoc();
   });
 })();

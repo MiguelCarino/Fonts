@@ -31,13 +31,13 @@
     st.textContent =
       '.uiexport-modal .export-meta{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;}' +
       '.uiexport-modal .export-lic{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;}' +
-      '.uiexport-modal .lic-card{background:var(--panel2);border:1px solid var(--border);border-radius:6px;' +
+      '.uiexport-modal .lic-card{background:var(--bg-elev);border:1px solid var(--border);border-radius:6px;' +
       'padding:12px 14px;cursor:pointer;transition:border-color .15s,background .15s;}' +
       '.uiexport-modal .lic-card:hover{border-color:var(--accent);}' +
       '.uiexport-modal .lic-card.active{border-color:var(--accent);background:rgba(234,179,8,.08);}' +
       '.uiexport-modal .lic-card h4{font-size:var(--fs-sec);margin-bottom:4px;}' +
       '.uiexport-modal .lic-card.active h4{color:var(--accent);}' +
-      '.uiexport-modal .lic-card p{font-size:var(--fs-sm);color:var(--text-dim);line-height:1.45;}' +
+      '.uiexport-modal .lic-card p{font-size:var(--fs-sm);color:var(--text-sec);line-height:1.45;}' +
       '.uiexport-modal .lic-note{font-size:var(--fs-sm);color:var(--text-muted);margin-top:10px;}' +
       '.uiexport-modal .export-note{font-size:var(--fs-sm);color:var(--text-muted);}';
     document.head.appendChild(st);
@@ -188,6 +188,9 @@
   }
 
   var UIExport = {
+    // The .cfont download on its own, for the navbar's Export menu.
+    saveProject: function () { onCfont(); },
+
     // Modal, not a tab: DOM lives only while the popup is open.
     open: function () {
       injectStyle();

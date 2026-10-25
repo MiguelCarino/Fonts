@@ -15,22 +15,20 @@
   var collapsed = {};            // set name -> block collapsed (UI-only state)
 
   var CSS =
-    // inline fallback look for the actions row; once the navbar adopts it the
-    // .cn-actions class + navbar CSS take over
+    // fallback row for the font's controls when there is no workspace rail
     '.uigm-actions { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }' +
     '#tab-glyphs > .uigm-actions { margin-bottom: 14px; }' +
-    '#tab-glyphs.over { outline: 2px dashed var(--accent); outline-offset: -4px; }' +
     // sets as compact status cells — same shape as the hub navbar's
     // reachability ping grid (dot + mono label in a small bordered cell)
     '.uigm-sets-modal .uigm-sets { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 4px; }' +
     '.uigm-sets-modal .uigm-setcell { display: flex; align-items: center; gap: 6px; min-width: 0;' +
     ' border: 1px solid var(--border); border-radius: 3px; padding: 4px 7px;' +
-    ' background: var(--panel2); cursor: pointer; user-select: none; transition: border-color .15s; }' +
+    ' background: var(--bg-elev); cursor: pointer; user-select: none; transition: border-color .15s; }' +
     '.uigm-sets-modal .uigm-setcell:hover { border-color: var(--accent); }' +
-    '.uigm-sets-modal .uigm-setcell .dot { width: 5px; height: 5px; border-radius: 50%; flex-shrink: 0; background: #666; }' +
+    '.uigm-sets-modal .uigm-setcell .dot { width: 5px; height: 5px; border-radius: 50%; flex-shrink: 0; background: var(--text-muted); }' +
     '.uigm-sets-modal .uigm-setcell.on .dot { background: var(--accent); box-shadow: 0 0 4px var(--accent); }' +
     '.uigm-sets-modal .uigm-setcell .lbl { flex: 1 1 auto; min-width: 0; font-family: "IBM Plex Mono", monospace;' +
-    ' font-size: var(--fs-micro); color: var(--text-dim); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }' +
+    ' font-size: var(--fs-micro); color: var(--text-sec); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }' +
     '.uigm-sets-modal .uigm-setcell.on .lbl { color: var(--text); }' +
     '.uigm-sets-modal .uigm-setcell .cnt { font-family: "IBM Plex Mono", monospace; font-size: var(--fs-micro); color: var(--text-muted); flex-shrink: 0; }' +
     '#tab-glyphs .uigm-block { margin-bottom: 14px; }' +
@@ -39,10 +37,10 @@
     '#tab-glyphs .uigm-head .arrow { color: var(--text-muted); font-size: var(--fs-sm); }' +
     '#tab-glyphs .uigm-head .uigm-count { margin-left: auto; }' +
     '#tab-glyphs .uigm-block.open .uigm-head { margin-bottom: 10px; }' +
-    '#tab-glyphs .uigm-count { font-family: "IBM Plex Mono", monospace; font-size: var(--fs-label); color: var(--text-dim); }' +
+    '#tab-glyphs .uigm-count { font-family: "IBM Plex Mono", monospace; font-size: var(--fs-label); color: var(--text-sec); }' +
     '#tab-glyphs .uigm-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(42px, 1fr)); gap: 3px; }' +
     '#tab-glyphs .uigm-cell { display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 5px 2px 3px;' +
-    ' background: var(--panel2); border: 1px solid var(--border); border-radius: 6px; cursor: pointer; user-select: none; }' +
+    ' background: var(--bg-elev); border: 1px solid var(--border); border-radius: 6px; cursor: pointer; user-select: none; }' +
     '#tab-glyphs .uigm-cell:hover { border-color: var(--accent); }' +
     '#tab-glyphs .uigm-cell.sel { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent); }' +
     '#tab-glyphs .uigm-cell canvas { width: ' + CANVAS_CSS + 'px; height: ' + CANVAS_CSS + 'px; display: block; }' +
@@ -466,36 +464,27 @@
       spacingBtn.addEventListener('click', function () { UI.switchTab('spacing'); });
       var previewBtn = i18nTag(el('button', { class: 'btn' }), 'Preview');
       previewBtn.addEventListener('click', function () { window.UIPreview.open(); });
-      var exportBtn = i18nTag(el('button', { class: 'btn primary' }), 'Export');
-      exportBtn.addEventListener('click', function () { window.UIExport.open(); });
+      // The font's controls sit in the workspace rail (a drawer on phones);
+      // the outputs are in the navbar's Export menu (js/app.js).
+      var rail = document.getElementById('railActions');
+      var railBox = rail || el('div', { class: 'uigm-actions' });
+      [newBtn, loadBtn, setsBtn, spacingBtn, previewBtn, input].forEach(function (b) { railBox.appendChild(b); });
+      if (!rail) root.appendChild(railBox);
 
-      // The app's actions live in the shared navbar (single top bar): the
-      // navbar adopts [data-carino-actions] when it injects; since this box is
-      // built after that, portal it in ourselves — the real nodes move, so
-      // handlers survive. Falls back to an inline row if the navbar never lands.
-      var actionsBox = el('div', { class: 'uigm-actions', 'data-carino-actions': '' }, [
-        newBtn, loadBtn, setsBtn, spacingBtn, previewBtn, exportBtn, input
-      ]);
-      root.appendChild(actionsBox);
-      (function portal(tries) {
-        if (actionsBox.closest('#carinoNav')) return;   // already adopted
-        var right = document.querySelector('#carinoNav .cn-right');
-        if (right) {
-          actionsBox.classList.add('cn-actions');
-          right.insertBefore(actionsBox, right.querySelector('.social-row'));
-          return;
-        }
-        if (tries > 0) requestAnimationFrame(function () { portal(tries - 1); });
-      })(60);
-
-      // whole-page drop target for font files
-      root.addEventListener('dragover', function (e) { e.preventDefault(); root.classList.add('over'); });
-      root.addEventListener('dragleave', function (e) { if (e.target === root) root.classList.remove('over'); });
-      root.addEventListener('drop', function (e) {
+      // Whole-window drop target for font and project files.
+      var depth = 0;
+      var hasFiles = function (e) { return e.dataTransfer && Array.prototype.indexOf.call(e.dataTransfer.types || [], 'Files') !== -1; };
+      window.addEventListener('dragenter', function (e) { if (hasFiles(e)) { depth++; document.body.classList.add('drop-over'); } });
+      window.addEventListener('dragleave', function () { if (depth > 0 && --depth === 0) document.body.classList.remove('drop-over'); });
+      window.addEventListener('dragover', function (e) { if (hasFiles(e)) e.preventDefault(); });
+      window.addEventListener('drop', function (e) {
+        depth = 0;
+        document.body.classList.remove('drop-over');
+        if (!hasFiles(e)) return;
         e.preventDefault();
-        root.classList.remove('over');
         if (e.dataTransfer.files.length) loadFile(e.dataTransfer.files[0]);
       });
+      UIGlyphMap.pickFile = function () { input.click(); };
 
       blocksHost = el('div', {});
       root.appendChild(blocksHost);
@@ -503,7 +492,9 @@
       FontModel.onChange(render);
       render();
     },
-    render: render
+    render: render,
+    loadFile: loadFile,
+    hasInk: hasInk
   };
 
   window.UIGlyphMap = UIGlyphMap;

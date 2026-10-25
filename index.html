@@ -27,16 +27,54 @@
   <script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebApplication", "name": "Carino Fonts", "url": "https://font.carino.systems/", "description": "Make fonts in your browser: pixel and vector glyph editing, kerning, live preview, TTF/WOFF export and subsetting. Everything stays on your machine.", "operatingSystem": "Any (runs in a web browser)", "isAccessibleForFree": true, "author": {"@type": "Person", "name": "Miguel Cariño", "url": "https://carino.systems/"}}</script>
   <!-- /carino:head -->
   <link rel="icon" type="image/webp" href="logo.webp"/>
+  <link rel="stylesheet" href="carino-ui.css"/>
   <link rel="stylesheet" href="fonts/carino-fonts.css"/>
   <link rel="stylesheet" href="styles.css"/>
   <script src="carino-navbar.js" data-app="Fonts" data-repo="Fonts" defer></script>
+  <script src="carino-ui.js" defer></script>
   <script src="carino-lang.js" defer></script>
   <script src="js/i18n.js" defer></script>
 </head>
 <body>
-  <!-- header.top-header is injected here by carino-navbar.js -->
-  <main>
-    <section id="tab-glyphs" class="active"></section>
+  <!-- Navbar controls: carino-navbar.js moves this node into the bar. Every
+       output sits in the one Export menu (wired in js/app.js). -->
+  <div data-carino-actions id="fontsActions">
+    <div class="cs-menu" data-priority="1">
+      <button type="button" class="cs-btn primary" id="exportMenuBtn" aria-haspopup="true" aria-expanded="false"><span data-i18n>Export</span> <span class="cs-caret">▾</span></button>
+      <div class="cs-menu-panel" role="menu" aria-labelledby="exportMenuBtn" hidden>
+        <button type="button" class="cs-menu-item" role="menuitem" id="exportFontBtn"><span data-i18n>Font file…</span> <span class="cs-menu-note">TTF · WOFF</span></button>
+        <button type="button" class="cs-menu-item" role="menuitem" id="exportProjectBtn"><span data-i18n>Project file</span> <span class="cs-menu-note">.cfont</span></button>
+      </div>
+    </div>
+  </div>
+
+  <main class="ws fonts-ws">
+    <!-- Settings rail: the font's own controls. A drawer at 900px and below. -->
+    <aside class="ws-rail fonts-rail" id="fontsRail">
+      <div class="t-label" data-i18n>Font</div>
+      <div class="rail-actions" id="railActions"></div>
+      <div class="ws-rail-foot"><p class="privacy-line" data-i18n>Runs in your browser. Nothing you add here is uploaded.</p></div>
+    </aside>
+    <div class="ws-pane fonts-pane">
+      <button type="button" class="cs-btn ws-toggle" data-ws-toggle>☰ <span data-i18n>Font</span></button>
+      <!-- Empty state: shown while the font has no glyphs and nothing has
+           been started (js/app.js). -->
+      <div class="short-hero" id="fontsHero" hidden>
+        <img class="mark" src="logo.svg" alt="" width="48" height="48">
+        <h1><span data-i18n>Draw your own font,</span><br><span class="gold" data-i18n>one glyph at a time.</span></h1>
+        <p class="sh-lede" data-i18n>Pixel or vector glyphs, kerning and a live preview, exported as TTF or WOFF.</p>
+        <div class="sh-input">
+          <button type="button" class="btn btn-primary" id="heroBlankBtn" data-i18n>Start blank</button>
+          <div class="dropzone" id="heroDrop" role="button" tabindex="0">
+            <div><span data-i18n>Drop a font or a .cfont project here, or</span> <strong data-i18n>browse</strong></div>
+            <div class="dz-hint">TTF · OTF · WOFF · SFD · CFONT</div>
+          </div>
+        </div>
+        <div class="examples"><span class="ex-label" data-i18n>Try:</span><button type="button" class="chip-tag" id="heroSampleBtn" data-i18n>Open a sample</button></div>
+        <p class="privacy-line" data-i18n>Runs in your browser. Nothing you add here is uploaded.</p>
+      </div>
+      <section id="tab-glyphs" class="active"></section>
+    </div>
   </main>
   <!-- popup sections: the editor and spacing UIs live here hidden and are
        moved into a modal when opened (see app.js openSection) -->
@@ -58,6 +96,7 @@
   <script src="js/ui-spacing.js"></script>
   <script src="js/ui-preview.js"></script>
   <script src="js/ui-export.js"></script>
+  <script src="js/sample.js"></script>
   <script src="js/app.js"></script>
 </body>
 </html>

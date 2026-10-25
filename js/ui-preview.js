@@ -36,7 +36,7 @@
       '.uipreview-modal .uipreview-size-field{width:280px;flex-shrink:0}' +
       '.uipreview-modal .uipreview-sizerow{display:flex;align-items:center;gap:12px;min-height:70px}' +
       '.uipreview-modal .uipreview-sizerow input[type=range]{flex:1}' +
-      '.uipreview-modal .uipreview-sizeval{font-family:"IBM Plex Mono",monospace;font-size:var(--fs-mono);color:var(--text-dim);min-width:52px}' +
+      '.uipreview-modal .uipreview-sizeval{font-family:"IBM Plex Mono",monospace;font-size:var(--fs-mono);color:var(--text-sec);min-width:52px}' +
       '.uipreview-modal .uipreview-status{font-family:"IBM Plex Mono",monospace;font-size:var(--fs-sm);min-height:1.2em}' +
       '.uipreview-modal .uipreview-status.ok{color:var(--ok)}' +
       '.uipreview-modal .uipreview-status.warn{color:var(--accent)}' +
