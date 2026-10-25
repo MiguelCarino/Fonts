@@ -221,6 +221,7 @@
       '.uiv-canvas-wrap{flex:1;position:relative;min-height:380px;background:#080808;' +
       'border:1px solid var(--border);border-radius:var(--radius);overflow:hidden}' +
       '.uiv-canvas-wrap svg{display:block;width:100%;height:100%}' +
+      '.uiv-svg{touch-action:none}' +
       '.uiv-svg.tool-pen{cursor:crosshair}.uiv-svg.tool-select{cursor:default}' +
       '.uiv-svg.panning{cursor:grabbing}.uiv-svg.pannable{cursor:grab}' +
       '.uiv-status{position:absolute;left:8px;bottom:6px;font-family:"IBM Plex Mono",monospace;' +
@@ -245,7 +246,13 @@
       '.uiv-side textarea{width:100%;min-height:64px;font-size:var(--fs-sm)}' +
       '.uiv-scalerow{display:flex;align-items:center;gap:6px;margin-top:8px}' +
       '.uiv-scalerow input{width:70px;padding:4px 6px;font-size:var(--fs-sm)}' +
-      '.uiv-scalerow label{font-size:var(--fs-micro);color:var(--text-sec);font-family:"IBM Plex Mono",monospace}';
+      '.uiv-scalerow label{font-size:var(--fs-micro);color:var(--text-sec);font-family:"IBM Plex Mono",monospace}' +
+      // touch: the mouse hint gives way to the touch one (.touch-only)
+      '@media (pointer:coarse){.uiv-hint.mouse{display:none}}' +
+      // phones: the side panels drop under a square-ish canvas
+      '@media (max-width:640px){.uiv-main{flex-direction:column;flex:none}' +
+      '.uiv-canvas-wrap{flex:none;height:min(60vh,92vw);min-height:260px}' +
+      '.uiv-side{width:auto;overflow:visible}}';
     document.head.appendChild(s);
   }
 
@@ -274,15 +281,31 @@
       g.contours = [];
       FontModel.save();
     });
-    var hint = i18nTag(el('span', 'uiv-hint'),
+    var hint = i18nTag(el('span', 'uiv-hint mouse'),
       'pen: click=corner · drag=smooth · click 1st pt=close · esc=stop | select: dblclick seg=insert · dblclick pt=corner/smooth · del=remove | space/mid-drag=pan · wheel=zoom');
+    var touchHint = i18nTag(el('span', 'uiv-hint touch-only'),
+      'pen: tap=corner · drag=smooth · tap 1st pt=close | select: double-tap seg=insert · double-tap pt=corner/smooth | two fingers=pan and zoom');
+    // No keyboard on a touch screen: Esc, Delete and Ctrl+Z get buttons there.
+    var doneBtn = i18nTag(el('button', 'btn touch-only'), 'Done');
+    var delBtn = i18nTag(el('button', 'btn touch-only'), 'Delete point');
+    var undoBtn = i18nTag(el('button', 'btn touch-only'), 'Undo');
+    doneBtn.addEventListener('click', function () {
+      if (pen) { finalizePen(true); renderScene(); }
+      else if (sel) { sel = null; renderScene(); }
+    });
+    delBtn.addEventListener('click', function () { deleteSelected(); });
+    undoBtn.addEventListener('click', function () { FontModel.undo(); });
     bar.appendChild(toolbarEls.glyph);
     bar.appendChild(toolbarEls.pen);
     bar.appendChild(toolbarEls.select);
     bar.appendChild(toolbarEls.snap);
     bar.appendChild(toolbarEls.fitBtn);
     bar.appendChild(toolbarEls.clearBtn);
+    bar.appendChild(doneBtn);
+    bar.appendChild(delBtn);
+    bar.appendChild(undoBtn);
     bar.appendChild(hint);
+    bar.appendChild(touchHint);
 
     var main = el('div', 'uiv-main');
     wrap = el('div', 'uiv-canvas-wrap');
@@ -894,7 +917,52 @@
   }
 
   // ── gestures ───────────────────────────────────────────────────
+  // Touch: a second finger turns whatever the first one started into a
+  // two-finger pan + pinch zoom (the first finger's tap is kept; Undo drops it).
+  var touches = {};
+  function touchPair() {
+    var ids = Object.keys(touches);
+    if (ids.length < 2) return null;
+    var a = touches[ids[0]], b = touches[ids[1]];
+    return { d: Math.max(1, dist(a.x, a.y, b.x, b.y)), mx: (a.x + b.x) / 2, my: (a.y + b.y) / 2 };
+  }
+  var lastTap = null, tapDblAt = 0;
+  // The first finger of a pinch placed a pen anchor that nobody meant: take it back.
+  function dropPenTap() {
+    var g = curGlyph(), pts = g && g.contours[gesture.ci];
+    if (pts && pts[gesture.pi]) {
+      pts.splice(gesture.pi, 1);
+      if (!pts.length) { g.contours.splice(gesture.ci, 1); pen = null; }
+    }
+    gesture = null;
+    renderScene();
+  }
+  function hitPx(e) { return e && e.pointerType === 'touch' ? 18 : 8; }
+
   function onDown(e) {
+    if (e.pointerType === 'touch') {
+      touches[e.pointerId] = { x: e.clientX, y: e.clientY };
+      var tp = touchPair();
+      if (tp) {
+        if (gesture && gesture.kind === 'pen' && !gesture.dragged) dropPenTap();
+        else if (gesture && gesture.kind !== 'pinch') onUp(e);
+        svg.setPointerCapture(e.pointerId);
+        var r0 = svg.getBoundingClientRect();
+        gesture = { kind: 'pinch', d0: tp.d, mx0: tp.mx - r0.left, my0: tp.my - r0.top, z0: cam.z, tx0: cam.tx, ty0: cam.ty };
+        return;
+      }
+      // a double tap is the touch dblclick (the browser may not send one)
+      if (tool === 'select') {
+        var now = Date.now();
+        if (lastTap && now - lastTap.t < 350 && dist(lastTap.x, lastTap.y, e.clientX, e.clientY) < 24) {
+          lastTap = null;
+          tapDblAt = now;
+          onDbl(e, true);
+          return;
+        }
+        lastTap = { t: now, x: e.clientX, y: e.clientY };
+      }
+    }
     if (!curGlyph() && tool !== 'select') { /* still allow pan */ }
     var isPan = e.button === 1 || (e.button === 0 && spaceDown);
     if (isPan) {
@@ -918,7 +986,7 @@
     svg.setPointerCapture(e.pointerId);
 
     if (tool === 'select') {
-      var hh = hitHandle(g, p, 8);
+      var hh = hitHandle(g, p, hitPx(e));
       if (hh) {
         var h = selHandles(g);
         var mirror = false;
@@ -933,7 +1001,7 @@
         gesture = { kind: 'handle', which: hh, mirror: mirror, moved: false };
         return;
       }
-      var ha = hitAnchor(g, p, 8);
+      var ha = hitAnchor(g, p, hitPx(e));
       if (ha) {
         sel = { ci: ha.ci, pi: ha.pi };
         gesture = {
@@ -957,13 +1025,13 @@
     }
   }
 
-  function penDown(g, p) {
+  function penDown(g, p, e) {
     // close on first-anchor click
     var oc = openCi();
     if (oc >= 0 && g.contours[oc] && g.contours[oc].length >= 2) {
       var pts = g.contours[oc];
       var first = pts[0], last = pts[pts.length - 1];
-      if (dist(first.x, first.y, p.x, p.y) * cam.z < 9) {
+      if (dist(first.x, first.y, p.x, p.y) * cam.z < hitPx(e) + 1) {
         var cx1 = pen.pendingOut ? pen.pendingOut.x : last.x;
         var cy1 = pen.pendingOut ? pen.pendingOut.y : last.y;
         var cx2 = pen.firstIn ? pen.firstIn.x : first.x;
@@ -996,6 +1064,18 @@
 
   function onMove(e) {
     if (!svg) return;
+    if (touches[e.pointerId]) touches[e.pointerId] = { x: e.clientX, y: e.clientY };
+    if (gesture && gesture.kind === 'pinch') {
+      var tp = touchPair();
+      if (!tp) return;
+      var r = svg.getBoundingClientRect();
+      var fx = (gesture.mx0 - gesture.tx0) / gesture.z0, fy = (gesture.ty0 - gesture.my0) / gesture.z0;
+      cam.z = clamp(gesture.z0 * tp.d / gesture.d0, 0.02, 30);
+      cam.tx = (tp.mx - r.left) - fx * cam.z;
+      cam.ty = (tp.my - r.top) + fy * cam.z;
+      scheduleScene();
+      return;
+    }
     var p = toFont(e);
     statusEl.textContent = Math.round(p.x) + ', ' + Math.round(p.y) + '  ×' + fmt(cam.z);
     if (!gesture) return;
@@ -1112,7 +1192,12 @@
   }
 
   function onUp(e) {
+    if (e && e.type !== 'pointerdown') delete touches[e.pointerId];
     if (!gesture) return;
+    if (gesture.kind === 'pinch') {
+      if (!touchPair()) gesture = null;
+      return;
+    }
     var g = curGlyph();
     var k = gesture.kind;
     if (k === 'bgmove') { gesture = null; return; }
@@ -1169,14 +1254,15 @@
     scheduleScene();
   }
 
-  function onDbl(e) {
+  function onDbl(e, fromTap) {
     if (tool !== 'select') return;
+    if (!fromTap && Date.now() - tapDblAt < 700) return;   // already handled as a double tap
     var g = curGlyph();
     if (!g) return;
     var p = toFont(e);
-    var ha = hitAnchor(g, p, 8);
+    var ha = hitAnchor(g, p, hitPx(e));
     if (ha) { toggleSmooth(g, ha.ci, ha.pi); return; }
-    var seg = nearestSegment(g.contours, p, 10 / cam.z);
+    var seg = nearestSegment(g.contours, p, (fromTap ? 20 : 10) / cam.z);
     if (seg) {
       var ni = splitSegment(g.contours[seg.ci], seg.s, seg.t);
       sel = { ci: seg.ci, pi: ni };
