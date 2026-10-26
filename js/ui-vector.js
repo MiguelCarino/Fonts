@@ -678,12 +678,12 @@
         stroke: horiz[i].c, 'stroke-width': 1, 'vector-effect': 'non-scaling-stroke'
       }));
       var s = toScreen(0, horiz[i].y);
-      var t = sv('text', {
+      var lbl = sv('text', {
         x: 6, y: fmt(s.y - 4), fill: 'var(--text-muted)', 'font-size': 10,
         'font-family': 'IBM Plex Mono, monospace'
       });
-      t.textContent = horiz[i].label;
-      L.screen.appendChild(t);
+      lbl.textContent = t(horiz[i].label);
+      L.screen.appendChild(lbl);
     }
     L.guides.appendChild(sv('line', {
       x1: 0, y1: fmt(v.y0), x2: 0, y2: fmt(v.y1),
@@ -700,7 +700,7 @@
         x: fmt(sa.x + 5), y: 14, fill: '#8a6d0a', 'font-size': 10,
         'font-family': 'IBM Plex Mono, monospace'
       });
-      pathEls.advLabel.textContent = 'adv ' + g.adv;
+      pathEls.advLabel.textContent = t('adv') + ' ' + g.adv;
       L.screen.appendChild(pathEls.advLabel);
     }
   }
@@ -1186,7 +1186,7 @@
       }
       if (pathEls.advLabel) {
         pathEls.advLabel.setAttribute('x', fmt(toScreen(nv, 0).x + 5));
-        pathEls.advLabel.textContent = 'adv ' + nv;
+        pathEls.advLabel.textContent = t('adv') + ' ' + nv;
       }
     }
   }

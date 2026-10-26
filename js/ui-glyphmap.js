@@ -255,6 +255,9 @@
 
   // Imported fonts open with every set they cover enabled — "show all of
   // them, let you turn them off". A .cfont project keeps its own saved sets.
+  // Unicode block names stay English (model data); only the catch-all is ours.
+  function setLabel(name) { return name === 'Other' ? t('Other') : name; }
+
   function enableCoveredSets(doc) {
     var by = glyphsBySet(doc);
     var sets = [];
@@ -316,9 +319,10 @@
     // the popup's whole point: EVERY set is on screen at once
     var addCell = function (name, count) {
       var on = isEnabled(doc, name);
-      var cell = el('span', { class: 'uigm-setcell' + (on ? ' on' : ''), title: name + ' — ' + t(on ? 'on: visible, editable, exported' : 'off: hidden and excluded from export') }, [
+      var shown = setLabel(name);
+      var cell = el('span', { class: 'uigm-setcell' + (on ? ' on' : ''), title: shown + ' — ' + t(on ? 'on: visible, editable, exported' : 'off: hidden and excluded from export') }, [
         el('span', { class: 'dot' }),
-        el('span', { class: 'lbl' }, name),
+        el('span', { class: 'lbl' }, shown),
         count ? el('span', { class: 'cnt' }, String(count)) : null
       ]);
       cell.addEventListener('click', function () { toggleSet(name); });
@@ -361,7 +365,7 @@
       }
       var arrow = el('span', { class: 'arrow' }, '▾');
       var counter = el('span', { class: 'uigm-count' });
-      var head = el('div', { class: 'uigm-head' }, [arrow, el('h3', {}, name), counter]);
+      var head = el('div', { class: 'uigm-head' }, [arrow, el('h3', {}, setLabel(name)), counter]);
       var grid = el('div', { class: 'uigm-grid' });
       var panel = el('div', { class: 'panel uigm-block open' }, [head]);
       var extras = [];

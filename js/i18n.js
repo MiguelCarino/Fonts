@@ -168,6 +168,13 @@ var I18N = {
         'Project file': 'Archivo de proyecto',
         'Opened the sample font': 'Se abrió la fuente de ejemplo',
         'Close': 'Cerrar',
+        // Vector guide labels and the catch-all set
+        'x-height': 'altura x',
+        'cap': 'mayúsculas',
+        'asc': 'ascendente',
+        'desc': 'descendente',
+        'adv': 'avance',
+        'Other': 'Otros',
     },
     'pt-BR': {
         'Late shift.': 'Turno da noite.',
@@ -321,6 +328,13 @@ var I18N = {
         'Project file': 'Arquivo de projeto',
         'Opened the sample font': 'A fonte de exemplo foi aberta',
         'Close': 'Fechar',
+        // Vector guide labels and the catch-all set
+        'x-height': 'altura-x',
+        'cap': 'caixa alta',
+        'asc': 'ascendente',
+        'desc': 'descendente',
+        'adv': 'avanço',
+        'Other': 'Outros',
     },
     ja: {
         'Late shift.': '夜勤お疲れさま。',
@@ -474,6 +488,13 @@ var I18N = {
         'Project file': 'プロジェクトファイル',
         'Opened the sample font': 'サンプルフォントを開きました',
         'Close': '閉じる',
+        // Vector guide labels and the catch-all set
+        'x-height': 'エックスハイト',
+        'cap': 'キャップ',
+        'asc': 'アセンダー',
+        'desc': 'ディセンダー',
+        'adv': '送り幅',
+        'Other': 'その他',
     },
     ru: {
         'Late shift.': 'Ночная смена.',
@@ -627,6 +648,13 @@ var I18N = {
         'Project file': 'Файл проекта',
         'Opened the sample font': 'Открыт пример шрифта',
         'Close': 'Закрыть',
+        // Vector guide labels and the catch-all set
+        'x-height': 'x-высота',
+        'cap': 'прописные',
+        'asc': 'верхний вынос',
+        'desc': 'нижний вынос',
+        'adv': 'ширина',
+        'Other': 'Прочее',
     },
 };
 
