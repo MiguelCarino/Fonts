@@ -142,3 +142,5 @@ a:hover { filter: brightness(1.15); }
 :root[data-carino-theme="color"] .btn.primary,
 :root[data-carino-theme="color"] .btn.danger:hover { color: var(--ct-on-accent); }
 :root[data-carino-theme="color"] .btn.primary:hover { background: var(--ct-accent-strong); border-color: var(--ct-accent-strong); color: var(--ct-on-accent); }
+/* one identity bar before each glyph-set name; the glyph canvases (the user's ink) stay untouched */
+:root[data-carino-theme="color"] #tab-glyphs .uigm-head h3::before { content: ""; display: inline-block; width: 4px; height: .9em; border-radius: 2px; margin-right: 8px; vertical-align: -1px; background: var(--ct-purple); }
