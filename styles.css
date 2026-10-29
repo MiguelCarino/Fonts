@@ -129,3 +129,16 @@ a:hover { filter: brightness(1.15); }
   .modal #editor-pixel .uipixel-main { flex-direction: column; align-items: stretch; }
   .modal #editor-pixel .uipixel-side { width: auto; }
 }
+
+/* ── Colourful theme ──────────────────────────────────────────── */
+/* carino-theme.css remaps the tokens, so everything that reads one follows;
+   these are the values above that were written for black. The editors'
+   canvases stay dark on purpose: they are the drawing surface, like paper. */
+.fonts-pane .short-hero .mark.mk-color, :root[data-carino-theme="color"] .fonts-pane .short-hero .mark.mk-gold { display: none; }
+:root[data-carino-theme="color"] .fonts-pane .short-hero .mark.mk-color { display: block; }
+:root[data-carino-theme="color"] body { background-image: var(--stage-grad); }
+:root[data-carino-theme="color"] ::selection { background: var(--accent-faint); color: var(--text); }
+:root[data-carino-theme="color"] .panel { box-shadow: var(--ct-shadow-1); }
+:root[data-carino-theme="color"] .btn.primary,
+:root[data-carino-theme="color"] .btn.danger:hover { color: var(--ct-on-accent); }
+:root[data-carino-theme="color"] .btn.primary:hover { background: var(--ct-accent-strong); border-color: var(--ct-accent-strong); color: var(--ct-on-accent); }

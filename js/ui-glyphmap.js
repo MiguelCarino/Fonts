@@ -122,7 +122,8 @@
     var Y = function (y) { return (asc - y) * s; };
     ctx.beginPath();
     trace(ctx, g, doc, 0, 0, X, Y, 0);
-    ctx.fillStyle = '#eab308';
+    // the theme's accent, so the map follows the Gold & Black / Colourful switch
+    ctx.fillStyle = getComputedStyle(canvas).getPropertyValue('--accent').trim() || '#eab308';
     ctx.fill('nonzero');
   }
 
@@ -436,6 +437,9 @@
   }
 
   // ── boot ──────────────────────────────────────────────────────
+
+  // A theme switch repaints the drawn glyphs in the new accent.
+  window.addEventListener('carino:themechange', render);
 
   var UIGlyphMap = {
     init: function () {
