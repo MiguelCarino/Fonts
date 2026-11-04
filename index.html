@@ -58,6 +58,27 @@
   <script src="js/i18n.js" defer></script>
 </head>
 <body>
+<!-- Key words: the navbar shows them, translated, under its Language tab. -->
+<ul data-carino-words hidden>
+  <li>Font</li>
+  <li>Start blank</li>
+  <li>Open a sample</li>
+  <li>Font file…</li>
+  <li>Project file</li>
+  <li>Export</li>
+</ul>
+
+<!-- Bundled libraries: the navbar lists them in its About window, Licence tab. -->
+<ul data-carino-libs data-href="https://github.com/MiguelCarino/Fonts/blob/main/vendor/README.md" hidden>
+  <li data-licence="MIT">opentype.js</li>
+</ul>
+
+
+<!-- What this page must say: the navbar shows it in its About window. -->
+<div data-carino-about hidden>
+  <p data-i18n>Runs in your browser. Nothing you add here is uploaded.</p>
+</div>
+
   <!-- Navbar controls: carino-navbar.js moves this node into the bar. Every
        output sits in the one Export menu (wired in js/app.js). -->
   <div data-carino-actions id="fontsActions">
@@ -75,7 +96,6 @@
     <aside class="ws-rail fonts-rail" id="fontsRail">
       <div class="t-label" data-i18n>Font</div>
       <div class="rail-actions" id="railActions"></div>
-      <div class="ws-rail-foot"><p class="privacy-line" data-i18n>Runs in your browser. Nothing you add here is uploaded.</p></div>
     </aside>
     <div class="ws-pane fonts-pane">
       <button type="button" class="cs-btn ws-toggle" data-ws-toggle>☰ <span data-i18n>Font</span></button>
@@ -94,7 +114,6 @@
           </div>
         </div>
         <div class="examples"><span class="ex-label" data-i18n>Try:</span><button type="button" class="chip-tag" id="heroSampleBtn" data-i18n>Open a sample</button></div>
-        <p class="privacy-line" data-i18n>Runs in your browser. Nothing you add here is uploaded.</p>
       </div>
       <section id="tab-glyphs" class="active"></section>
     </div>
